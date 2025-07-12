@@ -11,12 +11,6 @@ from keras.src.legacy.preprocessing.image import ImageDataGenerator
 from keras.utils import array_to_img, img_to_array, load_img
 
 datagen = ImageDataGenerator(
-    rotation_range=6,       # Random rotation (degrees)
-    height_shift_range=0.05,  # Vertical shift
-    zoom_range=0.05,          # Zoom in/out
-    horizontal_flip=True,    # Flip horizontally
-)
-datagen = ImageDataGenerator(
     rotation_range=2,             
     height_shift_range=0.03,
     width_shift_range=0.03,       

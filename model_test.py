@@ -52,7 +52,7 @@ def frames(q,label):
 
         # Convert and crop
         imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        cropped_hand = imgRGB[100:375, 750:1025]
+        cropped_hand = imgRGB[175:475, 800:1125]
 
         # Preprocess for model
         processed_img = load_and_preprocess_image(cropped_hand)
@@ -64,8 +64,8 @@ def frames(q,label):
         label1 = label.value 
 
         # Draw rectangle on original frame for visualization
-        rec = cv2.rectangle(frame, (750, 100), (1025, 375), (255,65,70), 3)
-        cv2.putText(rec, label1, (100, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,0,0), 2)
+        rec = cv2.rectangle(frame, (800, 175), (1125, 475), (255,65,70), 3)
+        cv2.putText(rec, label1, (800, 170), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,0,0), 2)
         cv2.imshow('ASL Detector', frame)
 
         # Break loop if 'q' key pressed
