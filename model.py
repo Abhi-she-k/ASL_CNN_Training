@@ -9,6 +9,7 @@ from tensorflow.keras.layers import (Conv2D, DepthwiseConv2D, BatchNormalization
                                      Dropout, SpatialDropout2D, MaxPooling2D, Flatten)
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
+from datetime import datetime
 
 def compute_info():
 
@@ -68,7 +69,7 @@ def model_layer(model, filter, pooling_stride, padding, activation, input_shape,
 
     if(input_shape):
 
-        model.add(Conv2D(filter, (3,3), strides=pooling_stride, padding=padding, input_shape=input_shape))  
+        model.add(Conv2D(filter, (3,3), strides=(1,1), padding=padding, input_shape=input_shape))  
         model.add(Activation(activation))
         model.add(MaxPooling2D(pool_size=(2,2), strides=pooling_stride))
 
@@ -77,7 +78,7 @@ def model_layer(model, filter, pooling_stride, padding, activation, input_shape,
 
     else:
 
-        model.add(Conv2D(filter, (3,3), strides=[1,1], padding=padding))   
+        model.add(Conv2D(filter, (3,3), strides=(1,1), padding=padding))   
         model.add(Activation(activation))
         model.add(MaxPooling2D(pool_size=(2,2), strides=pooling_stride))
         model.add(Dropout(dropout))
@@ -91,12 +92,12 @@ def flatten(model):
 
     return model
     
-def dense_layer(model, filter, classification, dropout=0, activation = 'relu', final_layer = "False"):
+def dense_layer(model, filter, classification, dropout, activation, final_layer):
 
     if(final_layer):
         
         model.add(Dense(classification))
-        model.add(Activation('softmax'))
+        model.add(Activation(activation))
 
         return model
         
@@ -107,130 +108,16 @@ def dense_layer(model, filter, classification, dropout=0, activation = 'relu', f
         model.add(Dropout(dropout))
     
         return model
+    
+def model_settings(model, learning_rate):
 
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
-# model = Sequential()
-
-# model.add(Conv2D(32, (3, 3), strides=(1, 1), padding='same', input_shape=(256, 256, 3)))
-# model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-
-# model.add(Conv2D(64, (3, 3), strides=(1, 1), padding='same'))
-# model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-
-# model.add(Conv2D(128, (3, 3), strides=(1, 1), padding='same'))
-# model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-
-# model.add(Conv2D(256, (3, 3), strides=(1, 1), padding='same'))
-# model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-
-# model.add(Dropout(0.5))
-
-# model.add(Conv2D(512, (3, 3), strides=(1, 1), padding='same'))
-# model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-
-# model.add(Dropout(0.5))
-
-# model.add(Flatten())
-
-# model.add(Dense(512))
-# model.add(Activation('relu'))
-# model.add(Dropout(0.35))
-
-# model.add(Dense(256))
-# model.add(Activation('relu'))
-# model.add(Dropout(0.3))
-
-# model.add(Dense(128))
-# model.add(Activation('relu'))
-# model.add(Dropout(0.15))
-
-# model.add(Dense(64))
-# model.add(Activation('relu'))
-# model.add(Dropout(0.05))
-
-
-# model.add(Dense(8))
-# model.add(Activation('softmax'))
-
-# # pretrainedModel = tf.keras.applications.MobileNetV2(
-# #     input_shape=(256, 256, 3),
-# #     include_top=False,
-# #     alpha=1,
-# #     weights='imagenet',
-# #     pooling=None  
-# # )
-
-# # pretrainedModel.trainable = False
-
-# # # for layer in pretrainedModel.layers[-9:]:
-# # #     layer.trainable = True
-
-# # inputs = pretrainedModel.input
-
-# # x = tf.keras.layers.GlobalAveragePooling2D()(pretrainedModel.output)
-
-# # # x = tf.keras.layers.Dense(512, activation='relu')(x)
-# # # x = tf.keras.layers.Dropout(0.2)(x)
-
-# # # x = tf.keras.layers.Dense(256, activation='relu')(x)
-# # # x = tf.keras.layers.Dropout(0.2)(x)
-
-# # x = tf.keras.layers.Dense(128, activation='relu')(x)
-
-# # outputs = tf.keras.layers.Dense(8, activation='softmax')(x)
-
-# # model = tf.keras.Model(inputs=inputs, outputs=outputs)
-
-# model.summary()
-
-# optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
-
-# model.compile(
-#     optimizer=optimizer,
-#     loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
-#     metrics=['accuracy']
-# )
-
-# callbacks = [
-#     EarlyStopping(monitor='val_loss', patience=4, restore_best_weights=True),
-#     ReduceLROnPlateau(monitor='val_loss', factor=0.01, patience=3)
-# ]
-
-# history = model.fit(
-#     trainData,
-#     epochs=20,
-#     validation_data=valData,
-#     callbacks=callbacks
-# )
-
-
-# plt.plot(history.history['accuracy'], label='accuracy')
-# plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
-# plt.xlabel('Epoch')
-# plt.ylabel('Accuracy')
-# plt.ylim([0, 1.2])
-# plt.legend(loc='lower right')
-# plt.show()
-
-# plt.plot(history.history['loss'], label='loss')
-# plt.plot(history.history['val_loss'], label = 'val_loss')
-# plt.xlabel('Epoch')
-# plt.ylabel('Loss')
-# plt.ylim([1.0e-12, 10])
-# plt.legend(loc='lower right')
-# plt.show()
-
-# test_loss, test_acc = model.evaluate(testData, verbose=2)
-
-# print(test_acc)
-
-# model.save("ASLCustomABCDEDFGBEST.keras")
-
+    model.compile(
+        optimizer=optimizer,
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
+        metrics=['accuracy']
+    )
 
 
 if __name__ == "__main__":
@@ -239,29 +126,82 @@ if __name__ == "__main__":
     
     compute_info()
 
-    file_path = "ASL_CNN_Training/data"
+    file_path = "/kaggle/input/2025-08-18/newData2025-08-18"
 
+    # SETTINGS
+    input_shape = (256,256,3)
+    epochs = 20
+    loss_factor = 0.01
     img_size = (256,256)
     batch_size = 32
     val_split = 0.2
-    # class_names = ["A", "B", "C", "D", "del", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-    #                "N", "nothing", "O", "P", "Q", "R", "S", "space", "T", "U", "V", "W", "X", "Y", "Z"]
-    class_names = ["A", "B", "C", "D", "E", "F", "G", "I", "J", "K", "L", "M", "N", "Nothing", "O", "P", "Q"]
+    learning_rate = 0.001
+
+    class_names = ["A", "B", "C", "D", "E", "F", "G", "I", "J", "K", "L", "M", "N", "Nothing", "O", "P", "Q", "R"]
+
+    classification = len(class_names)
+
+    now = datetime.now()
+    time_now = now.strftime("%H-%M-%S")
 
     training_data = create_model_subsets(file_path+"/training", class_names, img_size, val_split, "training", batch_size)
 
     val_data = create_model_subsets(file_path+"/training", class_names, img_size, val_split, "validation", batch_size)
 
-    training_data = create_model_subsets(file_path+"/test", class_names, img_size, 0, None, batch_size)
+    test_data = create_model_subsets(file_path+"/test", class_names, img_size, 0, None, batch_size)
 
-    input_shape = (256,256,3)
     
     model = model()
-
-# filter, pooling_stride, padding, activation, input_shape, dropout
     
-    model_layer(model, 32, (2,2), 'same', 'relu',input_shape, 0)
+    model_layer(model, 32, (2,2), 'same', 'relu', input_shape, 0)
+    model_layer(model, 64, (2,2), 'same', 'relu', False, 0)
+    model_layer(model, 128, (2,2), 'same', 'relu', False,  0)
+    model_layer(model, 256, (2,2), 'same', 'relu', False,  0)
+    model_layer(model, 512, (2,2), 'same', 'relu', False,  0.6)
+    model_layer(model, 1024, (4,4), 'same', 'relu', False,  0.6)
 
-    model_layer(model, 64, (2,2), 'same', 'relu',[] , 0)
+    flatten(model)
+
+    dense_layer(model, 256, 0, 0.3, 'relu', False)
+    dense_layer(model, 128, 0, 0.2, 'relu', False)
+    dense_layer(model, 64, 0, 0.15, 'relu', False)
+    dense_layer(model, 0, classification, 0, 'softmax', True)
 
     model.summary()
+
+    model_settings(model, learning_rate)
+
+    callbacks = [
+        EarlyStopping(monitor='val_loss', patience=4, restore_best_weights=True),
+        ReduceLROnPlateau(monitor='val_loss', factor=loss_factor, patience=3)
+    ]
+
+    history = model.fit(
+        training_data,
+        epochs=epochs,
+        validation_data=val_data,
+        callbacks=callbacks
+    )
+
+    plt.plot(history.history['accuracy'], label='accuracy')
+    plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.ylim([0, 1.2])
+    plt.legend(loc='lower right')
+    plt.show()
+
+    plt.plot(history.history['loss'], label='loss')
+    plt.plot(history.history['val_loss'], label = 'val_loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.ylim([1.0e-12, 10])
+    plt.legend(loc='lower right')
+    plt.show()
+
+    test_loss, test_acc = model.evaluate(test_data, verbose=2)
+
+    print(f"Test Accuracy: {test_acc}")
+
+
+    model.save(f"ASLCustom{time_now}.keras")
